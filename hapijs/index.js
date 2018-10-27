@@ -1,16 +1,25 @@
 'use strict';
 
 const Hapi=require('hapi');
+var corsHeaders = require('hapi-cors-headers');
+var method = require('./methods');
 
 // Create a server with a host and port
-const server=Hapi.server({
-    host:'localhost',
-    port:8000
+// const server=Hapi.server({
+//     host:'localhost',
+//     port:8000
+// });
+
+const server = new Hapi.Server();
+
+server.connection({
+    port: 8000
 });
 
+
 const loginData = {
-    username : 'kabil',
-    password : 'dev'
+    username : 'demo',
+    password : 'demo123'
 }
 // Add the route
 server.route([{
@@ -18,29 +27,38 @@ server.route([{
     path:'/login',
     handler:function(request,h) {
         let params = request.payload;
-        if(loginData.username != params.username) {
-            return { message : 'Invalid username', error : true};
-        }
-        if(loginData.password != params.password) {
-            return { message : 'Invalid password', error : true};
-        }
-        return { message : 'hello world', error : false};
+        return Promise.resolve(method.login(params))
+        .then((resp)=> {
+            return h(resp)
+        }).catch(function(err){
+            return h({error : true})
+        })
     }
 },{
     method:'GET',
     path:'/event/list',
     handler:function(request,h) {
-        let params = request.payload;
+        let params = request.query;
         
-        return { data : [{
-            eventId : 1,
-            eventName : 'Datat',
-            eventCategory : 'Test'
-        },{
-            eventId : 2,
-            eventName : 'Test',
-            eventCategory : 'Data'
-        }]};
+        return Promise.resolve(method.getList())
+        .then((resp)=> {
+            return h(resp)
+        }).catch(function(err){
+            return h({error : true})
+        })
+    }
+},{
+    method:'GET',
+    path:'/event/view',
+    handler:function(request,h) {
+        let params = request.query;
+        
+        return Promise.resolve(method.getDetails(params))
+        .then((resp)=> {
+            return h(resp)
+        }).catch(function(err){
+            return h({error : true})
+        })
     }
 },{
     method:'GET',
@@ -65,3 +83,4 @@ async function start() {
 };
 
 start();
+server.ext('onPreResponse', corsHeaders);

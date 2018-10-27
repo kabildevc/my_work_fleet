@@ -1,20 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+// import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
-import { createStore } from 'redux'
-import myreducer from './reducers'
+// import { createStore } from 'redux'
+// import myreducer from './reducer'
 import { Provider } from 'react-redux'
-
-
-const store = createStore(myreducer)
+import store from './stores';
+import Login from './Login'
+import List from './event/List'
+import View from './event/View'
 
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <Route path="/" component={App} />
+      <div>
+        <Route path="/" component={Login} exact/>
+        <Route path="/login" component={Login} exact/>
+        <Route path="/list" component={List} exact/>
+        <Route path="/view/:event_id" component={View} exact/>
+      </div>
     </Router>
   </Provider>, document.getElementById('root'));
 

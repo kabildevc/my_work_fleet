@@ -9,6 +9,18 @@ const formReducer = (state = {
         login : action.payload
       };
       break;
+    case 'LIST':
+      state = {
+        ...state,
+        eventList : action.payload.response
+      };
+      break;
+    case 'VIEW':
+      state = {
+        ...state,
+        eventDetails : action.payload.response
+      };
+      break;
     default:
       break;
   }

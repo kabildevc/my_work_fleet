@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import logo from './logo.svg';
 import './App.css';
 
 import {login} from './action';
 
-import PropTypes from 'prop-types';
+import PropType from 'prop-types';
 
 class Login extends Component {
 
@@ -12,7 +13,7 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      username: '',
+      username: 'demo',
       password : ''
     };
   }
@@ -20,6 +21,10 @@ class Login extends Component {
   static PropType = {
     login : PropType.func
   } 
+
+  // componentWillReceiveProps(){
+  //   alert(1)
+  // }
 
   handlechange (eve){
     this.setState({
@@ -29,9 +34,18 @@ class Login extends Component {
 
   login(eve){
     eve.preventDefault()
+    if(!this.state.username || this.state.username === ''){
+      alert('Please enter username')
+      return false
+    }
 
+    if(!this.state.password || this.state.password === ''){
+      alert('Please enter password')
+      return false
+    }
     this.props.login(this.state.username, this.state.password, (resp) =>{
-      console.log(data)
+      // console.log(resp)
+      this.props.history.push('/list')
     })
 
   }
@@ -40,13 +54,10 @@ class Login extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <input type="text" ref="username" name="username" value={this.state.username} onClick={(e)=> {this.handlechange(e)}}/> user name 
-          <input type="password" name="password" value={this.state.password}  onClick={(e)=> {this.handlechange(e)}}/> password
+          <input type="text" ref="username" name="username" value={this.state.username} onChange={(e)=> {this.handlechange(e)}}/> user name 
+          <input type="password" name="password" value={this.state.password}  onChange={(e)=> {this.handlechange(e)}}/> password
 
-          <input type="submit" name="password" value={this.state.password}  onClick={(e)=> {this.login(e)}}/> password
+          <button type="submit" name="submit"  onClick={(e)=> {this.login(e)}}>Submit</button>
         </header>
       </div>
     );
@@ -61,7 +72,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     login : function(username, password, callback){
-      dispatch(loginAction(username, password, callback))
+      dispatch(login(username, password, callback))
     }
   }
 }
